@@ -1,0 +1,190 @@
+// BlackJackGame.cpp
+//
+
+#include <iostream>
+#include <vector>
+#include <cassert>
+#include <algorithm>
+#include <cassert>
+using namespace std;
+
+enum suit { HEARTS, SPADES, CLUBS, DIAMONDS }; // Масть карты. 	 
+enum card_value { ACE = 1, KING = 10, Queen = 10, Jack = 10, TEN = 10, NINE = 9, EIGHT = 8, SEVEN = 7, SIX = 6, FIVE = 5, FOUR = 4, THREE = 3, TWO = 2 };
+
+class Card
+{
+protected:
+	bool shirt; // булево shirt, елси true -- shirt(рубашкой вверх). иначе  false -- картинкой вверх.
+	
+	suit Suit;      // масть карты
+		 //  bool shirt;    // можно тоже  enum?
+	card_value Value; // значение карты  - value
+public:
+
+	
+
+	Card(bool shi, suit sui, card_value val) : shirt(shi), Suit(sui), Value(val)
+	{};
+	~Card()
+	{};
+
+	void Flip()
+	{
+		if (shirt == true)// рубашка = true  - рубашкой вверх  
+		{
+			shirt = false; // переварачивем картинкой вверх
+		}
+		else // было картинкой вверх
+		{
+			shirt = true;  // переварачивем  рубашкой вверх
+		}
+	};
+	card_value GetValue()
+	{
+		return Value;
+	};
+
+	void Print_card()  // Проверить что получилось.
+	{
+		cout << "shirt up?: " << shirt << endl;
+		if (Suit == 0)
+		{
+			cout << "Suit: HEARTS " << Suit << endl;
+		}
+		if (Suit == 1)
+		{
+			cout << "Suit: SPADES " << Suit << endl;
+		}
+		if (Suit == 2)
+		{
+			cout << "Suit: CLUBS " << Suit << endl;
+		}
+		if (Suit == 3)
+		{
+			cout << "Suit: DIAMONDS " << Suit << endl;
+		}
+
+		cout << "Value: " << Value << endl;
+		cout << endl;
+
+	};
+
+};
+class Hand
+{
+
+protected:
+	vector <Card*> card_hand;
+
+public:
+
+	Hand() : card_hand(0)
+	{
+
+	};
+	~Hand()
+	{};
+
+	void AddHand(Card* cd)  //этот метод будет добавлять указатель в конец вектора.
+	{
+
+		card_hand.push_back(cd);
+	};
+
+	void ClearHand() //этот метод который буудет очищать руку от карт
+	{
+		assert(card_hand.size() >= 0);
+		card_hand.clear();
+	};
+
+	int Value(Card* n)
+	{
+		int x;
+		if (n->GetValue() == 1) // в классической игре туз имеет Value 1||11 тогда, когда нужно игроку. Можно будет потом дописать проверку на вводимые символы, но пока доверимся игроку)
+		{
+			cout << "You have an ACE! Choice Value 1 or 11 :";
+			cin >> x;  // ожидаем выбор пользователя 
+			cout << endl;
+
+			if (x == 1) 
+			{
+				return 1;  
+			}
+			else // тут если игрок введет не 1, то вернем 11 :) все логично
+			{
+				return 11;
+			}
+		}
+		else 
+		return n->GetValue();
+	}
+	int GetValueHand() //  возвращает сумму очков карт руки, 
+	{
+		//для того чтобы дать сумму очков сложим все эл.ты вектора. 
+		int Scoring_points = 0;
+		int i = 0;
+
+
+
+		vector<Card*>::iterator it;
+		for (it = card_hand.begin(); it != card_hand.end(); it++, i++)
+		{
+			Scoring_points += Value(card_hand[i]);
+		}
+
+		return Scoring_points;   // Можно или вернуть кол-во, или же сразу выводить. 
+
+		//cout << "points: " << Scoring_points << endl; 
+	};
+
+};
+
+int main()
+{
+    int  points;
+
+	Card* card1 = new Card(false, HEARTS, ACE);
+	card1->Print_card();
+	Card* card2 = new Card(true, DIAMONDS, KING);
+	card2->Print_card();
+	Card* card3 = new Card(true, CLUBS, SEVEN);
+	card3->Print_card();
+	Card* card4 = new Card(true, SPADES, TWO);
+	card4->Print_card();
+
+
+
+
+	Hand hand1;
+	hand1.AddHand(card1);
+	hand1.AddHand(card2);
+	hand1.AddHand(card3);
+	hand1.AddHand(card4);
+
+	cout << "in hand: ";
+	hand1.PrintHand();
+
+
+	cout << endl;
+	cout << "---------" << endl;
+
+	//В руку добавлено 4 карты с value 1||11 + 10 + 7 + 2  должно получатся либо 20 либо 30 points в зависимости от выбора игрока value ACE
+	points = hand1.GetValueHand();
+	cout << "points: " << points << endl;
+
+	delete card1;
+	delete card2;
+	delete card3;
+	delete card4;
+}
+
+// Запуск программы: CTRL+F5 или меню "Отладка" > "Запуск без отладки"
+// Отладка программы: F5 или меню "Отладка" > "Запустить отладку"
+
+// Советы по началу работы 
+//   1. В окне обозревателя решений можно добавлять файлы и управлять ими.
+//   2. В окне Team Explorer можно подключиться к системе управления версиями.
+//   3. В окне "Выходные данные" можно просматривать выходные данные сборки и другие сообщения.
+//   4. В окне "Список ошибок" можно просматривать ошибки.
+//   5. Последовательно выберите пункты меню "Проект" > "Добавить новый элемент", чтобы создать файлы кода, или "Проект" > "Добавить существующий элемент", чтобы добавить в проект существующие файлы кода.
+//   6. Чтобы снова открыть этот проект позже, выберите пункты меню "Файл" > "Открыть" > "Проект" и выберите SLN-файл.
